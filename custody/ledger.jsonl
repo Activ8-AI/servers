@@ -1,0 +1,4 @@
+{"event_type":"HEARTBEAT","payload":{"emitted_at":"2025-11-24T11:25:04.453134+00:00","service":"codex-mcp-relay","status":"alive"},"ts":1763983504.4532707}
+{"event_type":"AUTONOMY_LOOP","payload":{"intent":"AUTONOMY_LOOP","iteration":1,"notes":"baseline loop"},"ts":1763983526.8005235}
+{"event_type":"AUTONOMY_LOOP","payload":{"intent":"AUTONOMY_LOOP","iteration":2,"notes":"baseline loop"},"ts":1763983528.800684}
+{"event_type":"AUTONOMY_LOOP","payload":{"intent":"AUTONOMY_LOOP","iteration":3,"notes":"baseline loop"},"ts":1763983530.8009229}

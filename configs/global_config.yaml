@@ -1,0 +1,21 @@
+{
+  "relay": {
+    "host": "127.0.0.1",
+    "port": 8000,
+    "service_name": "codex-mcp-relay"
+  },
+  "telemetry": {
+    "heartbeat_channel": "local",
+    "status_file": "telemetry/.heartbeat-state.json"
+  },
+  "ledger": {
+    "path": "custody/ledger.jsonl"
+  },
+  "autonomy_loop": {
+    "interval_seconds": 2,
+    "payload": {
+      "intent": "AUTONOMY_LOOP",
+      "notes": "baseline loop"
+    }
+  }
+}
