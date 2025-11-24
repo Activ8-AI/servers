@@ -1,0 +1,5 @@
+# Placeholder global configuration file required by the validator.
+orchestrator:
+  enabled: true
+telemetry:
+  heartbeat_interval_seconds: 60
