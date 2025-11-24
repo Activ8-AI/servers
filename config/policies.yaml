@@ -1,0 +1,13 @@
+policies:
+  advisory:
+    escalation_threshold: "medium"
+    compliance:
+      - "charter_alignment"
+      - "clarity"
+      - "actionability"
+      - "compliance"
+  logging:
+    redact_keys:
+      - "API_KEY"
+      - "SECRET"
+    persist_environment_snapshot: true

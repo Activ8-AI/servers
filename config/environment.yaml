@@ -1,0 +1,6 @@
+environment:
+  name: "meta_mega_codex"
+  timezone: "UTC"
+  vault_path: "PreservationVault"
+  runs_subdir: "runs"
+  digests_subdir: "digests"
