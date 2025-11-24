@@ -1,0 +1,32 @@
+name: Governor Failover Runner
+
+on:
+  schedule:
+    - cron: "30 3 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  failover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - run: pip install -r requirements.txt
+
+      - name: Run resilient governor runner
+        run: python resilient_governor_runner.py
+
+      - name: Commit failover log
+        run: |
+          git config user.name "governor-failover-bot"
+          git config user.email "bot@activ8ai.app"
+          git add governor_failover_log.json custodian_governor_log.json genesis_trace.json
+          git commit -m "Update governor failover log [Automated]" || echo "No changes"
+          git push
