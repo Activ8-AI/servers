@@ -1,0 +1,11 @@
+clients:
+  wilson_case:
+    teamwork_project_id: "TW-ALPHA-001"
+    default_assignees:
+      - "ops_lead"
+    default_role_ids:
+      - "business_owner_wilson"
+      - "strategy_ops_wilson"
+    role_ids:
+      - "ops_lead"
+      - "business_owner_wilson"
