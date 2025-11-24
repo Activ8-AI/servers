@@ -1,0 +1,18 @@
+{
+  "name": "Personal Copilot Policy",
+  "version": "2025.11.24",
+  "guidance": {
+    "style": "Concise and documented",
+    "testing": "Run smoke tests only",
+    "review": "Optional unless touching security files"
+  },
+  "guardrails": {
+    "secret_scanning": true,
+    "restricted_dirs": [],
+    "allow_force_push": false
+  },
+  "rollback": {
+    "on_failure": "re-run sweep with --dry-run",
+    "notify": ["personal-ops@example.com"]
+  }
+}

@@ -1,0 +1,36 @@
+name: Personal Governor Sweep
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * *'
+
+jobs:
+  sweep:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.0
+      - name: Setup Python
+        uses: actions/setup-python@v4.7.0
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: requirements-charter.txt
+      - name: Install runtime
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-charter.txt
+      - name: Run Personal Governor
+        env:
+          PAT_PERSONAL: ${{ secrets.PAT_PERSONAL }}
+        run: python personal_governor.py --ci
+      - name: Aggregate Evidence
+        run: python governor_evidence_aggregator.py
+      - name: Upload Evidence
+        uses: actions/upload-artifact@v4.4.3
+        with:
+          name: personal-governor-evidence
+          path: artifacts/governor_evidence.json

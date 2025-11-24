@@ -1,0 +1,35 @@
+{
+  "name": "Activ8 AI Domain Policy",
+  "version": "2025.11.24",
+  "sovereign_boundary": "activ8-ai",
+  "sweep": {
+    "cadence": "hourly",
+    "windows": ["00:05", "12:05"],
+    "max_parallel_branch_scans": 2,
+    "retry_backoff_seconds": [30, 60, 120]
+  },
+  "repositories": [
+    {"url": "https://github.com/activ8-ai/mainframe", "release_channel": "stable"},
+    {"url": "https://github.com/activ8-ai/experiments", "release_channel": "canary"}
+  ],
+  "controls": {
+    "dependency_policy": {
+      "lockfiles_required": true,
+      "frozen_binaries": ["python==3.11.7", "node==20.11.1"],
+      "integrity_check": "sha256"
+    },
+    "commit_policy": {
+      "allowed_authors": ["activ8-governor"],
+      "message_prefix": "[Activ8 Sweep]"
+    },
+    "observability": {
+      "evidence_channel": "artifacts/activ8",
+      "dashboards": ["governor_evidence.json", "custodian.log"]
+    }
+  },
+  "escalation": {
+    "watchdog_minutes": 25,
+    "notify": ["activ8-ops@activ8.ai"],
+    "failsafe_branch": "activ8/governor-failover"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "name": "LMAOS Domain Policy",
+  "version": "2025.11.24",
+  "sovereign_boundary": "lmaos",
+  "sweep": {
+    "cadence": "every-2h",
+    "windows": ["01:10", "05:10", "09:10", "13:10", "17:10", "21:10"],
+    "max_parallel_branch_scans": 1,
+    "retry_backoff_seconds": [45, 90, 180]
+  },
+  "repositories": [
+    {"url": "https://github.com/lmaos/core", "release_channel": "stable"},
+    {"url": "https://github.com/lmaos/research", "release_channel": "beta"}
+  ],
+  "controls": {
+    "dependency_policy": {
+      "lockfiles_required": true,
+      "frozen_binaries": ["python==3.10.14"],
+      "integrity_check": "sha512"
+    },
+    "commit_policy": {
+      "allowed_authors": ["lma-governor"],
+      "message_prefix": "[LMA Sweep]"
+    },
+    "observability": {
+      "evidence_channel": "artifacts/lma",
+      "dashboards": ["governor_evidence.json"]
+    }
+  },
+  "escalation": {
+    "watchdog_minutes": 45,
+    "notify": ["ops@lmaos.ai"],
+    "failsafe_branch": "lma/governor-failover"
+  }
+}

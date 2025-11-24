@@ -1,0 +1,2 @@
+# Placeholder requirements for Meta Mega Codex runtime
+# The governors currently only depend on the Python standard library.

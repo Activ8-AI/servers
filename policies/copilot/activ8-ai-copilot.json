@@ -1,0 +1,18 @@
+{
+  "name": "Activ8 AI Copilot Policy",
+  "version": "2025.11.24",
+  "guidance": {
+    "style": "Deterministic, audit-friendly, cite log references",
+    "testing": "Run governor_suites/activ8 before release",
+    "review": "Tag @activ8-approvers for all sweep PRs"
+  },
+  "guardrails": {
+    "secret_scanning": true,
+    "restricted_dirs": ["secrets", "keys"],
+    "allow_force_push": false
+  },
+  "rollback": {
+    "on_failure": "open failover issue with artifact attachment",
+    "notify": ["activ8-ops@activ8.ai"]
+  }
+}

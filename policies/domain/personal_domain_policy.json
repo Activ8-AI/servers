@@ -1,0 +1,34 @@
+{
+  "name": "Personal Domain Policy",
+  "version": "2025.11.24",
+  "sovereign_boundary": "personal",
+  "sweep": {
+    "cadence": "daily",
+    "windows": ["06:00"],
+    "max_parallel_branch_scans": 1,
+    "retry_backoff_seconds": [60, 180]
+  },
+  "repositories": [
+    {"url": "https://github.com/personal/projects", "release_channel": "stable"}
+  ],
+  "controls": {
+    "dependency_policy": {
+      "lockfiles_required": false,
+      "frozen_binaries": ["python==3.11.7"],
+      "integrity_check": "sha256"
+    },
+    "commit_policy": {
+      "allowed_authors": ["personal-governor"],
+      "message_prefix": "[Personal Sweep]"
+    },
+    "observability": {
+      "evidence_channel": "artifacts/personal",
+      "dashboards": ["governor_evidence.json", "custodian.log"]
+    }
+  },
+  "escalation": {
+    "watchdog_minutes": 90,
+    "notify": ["personal-ops@example.com"],
+    "failsafe_branch": "personal/governor-failover"
+  }
+}

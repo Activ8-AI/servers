@@ -1,0 +1,18 @@
+{
+  "name": "LMAOS Copilot Policy",
+  "version": "2025.11.24",
+  "guidance": {
+    "style": "High-signal diffs, annotate risk",
+    "testing": "Minimum: pytest -m governor",
+    "review": "Request @lma-auditors"
+  },
+  "guardrails": {
+    "secret_scanning": true,
+    "restricted_dirs": ["keys", "infra"],
+    "allow_force_push": false
+  },
+  "rollback": {
+    "on_failure": "invoke resilient_governor_runner failover path",
+    "notify": ["ops@lmaos.ai"]
+  }
+}
