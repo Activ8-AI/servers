@@ -6,6 +6,8 @@ from __future__ import annotations
 
 from typing import Any, Dict, Iterable
 
+from telemetry.emit_heartbeat import generate_heartbeat
+
 
 class Orchestrator:
     def __init__(self, ledger, relays: Iterable[Any]):
@@ -53,8 +55,6 @@ class Orchestrator:
 
     # Example command
     def cmd_mvp_health_check(self, payload: Dict[str, Any] | None = None) -> Dict[str, Any]:
-        from telemetry.emit_heartbeat import generate_heartbeat
-
         res: Dict[str, Any] = {
             "mcp": "unknown",
             "heartbeat": None,
