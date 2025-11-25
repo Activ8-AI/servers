@@ -18,6 +18,11 @@ class Orchestrator:
 
     # Pattern for valid command names: alphanumeric and underscores only
     _VALID_CMD_PATTERN = re.compile(r"^[a-zA-Z][a-zA-Z0-9_]*$")
+    _INVALID_CMD_ERROR = (
+        "Command name must start with a letter and contain only "
+        "alphanumeric characters and underscores"
+    )
+
     def __init__(self, ledger, relays: Iterable[Any]):
         """
         Initialize the Orchestrator.
@@ -42,6 +47,7 @@ class Orchestrator:
         """
         self.ledger = ledger
         self.relays = list(relays)
+
     def log(self, event_type: str, payload: Dict[str, Any] | None = None) -> None:
         self.ledger.log_event(event_type, payload or {})
 
@@ -103,7 +109,7 @@ class Orchestrator:
         # Validate command name to prevent injection attacks
         if not self._validate_command_name(cmd):
             self.log("ORCH_COMMAND_INVALID", {"cmd": cmd})
-            return {"status": "invalid_command", "error": "Command name must start with a letter and contain only alphanumeric characters and underscores"}
+            return {"status": "invalid_command", "error": self._INVALID_CMD_ERROR}
 
         self.log("ORCH_COMMAND_RECEIVED", {"cmd": cmd})
 
