@@ -4,11 +4,11 @@ from agent_hub.activate import activate
 
 
 def test_agent_activation():
-    """Test that agent activation logs an event to the ledger."""
+    """Test that agent activation logs an AGENT_ACTIVATED event."""
     mock_log_event = MagicMock()
 
-    with patch("custody.custodian_ledger.log_event", mock_log_event), \
-         patch("agent_hub.activate.log_event", mock_log_event):
+    # Patch the log_event where it's imported in activate module
+    with patch("agent_hub.activate.log_event", mock_log_event):
         activate()
         # Verify log_event was called at least once (for AGENT_ACTIVATED)
         mock_log_event.assert_called()
