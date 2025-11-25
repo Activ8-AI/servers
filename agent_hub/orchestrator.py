@@ -4,7 +4,13 @@ High-level command orchestrator for coordinating agent helpers.
 
 from __future__ import annotations
 
+import re
 from typing import Any, Dict, Iterable
+
+from telemetry.emit_heartbeat import generate_heartbeat
+
+# Pattern for valid command names: alphanumeric and underscores only
+_VALID_CMD_PATTERN = re.compile(r"^[a-zA-Z][a-zA-Z0-9_]*$")
 
 
 class Orchestrator:
@@ -36,6 +42,36 @@ class Orchestrator:
         self.ledger.log_event(event_type, payload or {})
 
     def run_command(self, cmd: str, payload: Dict[str, Any] | None = None) -> Dict[str, Any]:
+        """
+        Execute a command by name.
+
+        Args:
+            cmd: The command name to execute. Must be alphanumeric (with underscores allowed),
+                start with a letter, and cannot start with an underscore. Available commands
+                are methods prefixed with 'cmd_' (e.g., 'mvp_health_check' calls 'cmd_mvp_health_check').
+            payload: Optional dictionary of parameters to pass to the command handler.
+
+        Returns:
+            A dictionary with 'status' key ('ok', 'error', 'invalid_command', or 'unknown_command')
+            and optionally 'result' or 'error' keys.
+
+        Available commands:
+            - mvp_health_check: Performs a basic health check of MCP, heartbeat, and ledger.
+        """
+        # Validate command name format
+        if not cmd or not isinstance(cmd, str):
+            self.log("ORCH_COMMAND_INVALID", {"cmd": cmd, "reason": "empty or invalid type"})
+            return {"status": "invalid_command", "error": "Command must be a non-empty string"}
+
+        if not _VALID_CMD_PATTERN.match(cmd):
+            self.log("ORCH_COMMAND_INVALID", {"cmd": cmd, "reason": "invalid format"})
+            return {"status": "invalid_command", "error": "Command must be alphanumeric, start with a letter"}
+
+        # Prevent calling internal methods (those starting with underscore)
+        if cmd.startswith("_"):
+            self.log("ORCH_COMMAND_INVALID", {"cmd": cmd, "reason": "internal method access"})
+            return {"status": "invalid_command", "error": "Cannot call internal methods"}
+
         self.log("ORCH_COMMAND_RECEIVED", {"cmd": cmd})
 
         handler = getattr(self, f"cmd_{cmd}", None)
@@ -53,8 +89,6 @@ class Orchestrator:
 
     # Example command
     def cmd_mvp_health_check(self, payload: Dict[str, Any] | None = None) -> Dict[str, Any]:
-        from telemetry.emit_heartbeat import generate_heartbeat
-
         res: Dict[str, Any] = {
             "mcp": "unknown",
             "heartbeat": None,

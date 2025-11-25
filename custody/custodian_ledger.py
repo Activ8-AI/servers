@@ -1,5 +1,8 @@
 """
 SQLite-backed ledger utility for recording and inspecting orchestration events.
+
+Thread-safety: This module uses SQLite's WAL mode for better concurrent access.
+For multi-process scenarios, consider using a dedicated database server.
 """
 
 from __future__ import annotations
@@ -12,10 +15,21 @@ from typing import Any, Dict, List
 
 DB_PATH = Path(__file__).with_name("ledger.db")
 
+# Database connection timeout in seconds
+DB_TIMEOUT = 30.0
+
+
+def _get_connection() -> sqlite3.Connection:
+    """Get a database connection with appropriate settings for concurrent access."""
+    conn = sqlite3.connect(DB_PATH, timeout=DB_TIMEOUT)
+    # Enable WAL mode for better concurrent read/write access
+    conn.execute("PRAGMA journal_mode=WAL")
+    return conn
+
 
 def _ensure_db() -> None:
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with sqlite3.connect(DB_PATH) as conn:
+    with _get_connection() as conn:
         conn.execute(
             """
             CREATE TABLE IF NOT EXISTS ledger (
@@ -40,7 +54,7 @@ def log_event(event_type: str, payload: Dict[str, Any] | None = None) -> None:
     payload = payload or {}
     _ensure_db()
     timestamp = datetime.now(timezone.utc).isoformat()
-    with sqlite3.connect(DB_PATH) as conn:
+    with _get_connection() as conn:
         conn.execute(
             "INSERT INTO ledger (timestamp, event_type, payload) VALUES (?, ?, ?)",
             (timestamp, event_type, json.dumps(payload)),
@@ -57,7 +71,7 @@ def get_last_events(n: int = 10) -> List[Dict[str, Any]]:
         return []
 
     _ensure_db()
-    with sqlite3.connect(DB_PATH) as conn:
+    with _get_connection() as conn:
         cur = conn.execute(
             "SELECT timestamp, event_type, payload FROM ledger ORDER BY id DESC LIMIT ?",
             (n,),
