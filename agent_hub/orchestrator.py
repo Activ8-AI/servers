@@ -9,7 +9,7 @@ from typing import Any, Dict, Iterable
 
 from telemetry.emit_heartbeat import generate_heartbeat
 
-# Pattern for valid command names: alphanumeric and underscores only
+# Pattern for valid command names: alphanumeric with underscores allowed as separators
 _VALID_CMD_PATTERN = re.compile(r"^[a-zA-Z][a-zA-Z0-9_]*$")
 
 
@@ -65,7 +65,7 @@ class Orchestrator:
 
         if not _VALID_CMD_PATTERN.match(cmd):
             self.log("ORCH_COMMAND_INVALID", {"cmd": cmd, "reason": "invalid format"})
-            return {"status": "invalid_command", "error": "Command must be alphanumeric, start with a letter"}
+            return {"status": "invalid_command", "error": "Command must be alphanumeric with underscores allowed, start with a letter"}
 
         # Prevent calling internal methods (those starting with underscore)
         if cmd.startswith("_"):

@@ -1,23 +1,16 @@
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
-from custody.custodian_ledger import get_last_events, log_event
 from telemetry.emit_heartbeat import generate_heartbeat
 
 
 def test_single_cycle():
     """Test that a single autonomy cycle logs an event to the ledger."""
-    fake_ledger = []
+    mock_log_event = MagicMock()
 
-    def fake_get_last_events(n):
-        return fake_ledger[-n:]
-
-    def fake_log_event(event_type, event_data=None):
-        fake_ledger.append((event_type, event_data))
-
-    with patch("custody.custodian_ledger.get_last_events", side_effect=fake_get_last_events), \
-         patch("custody.custodian_ledger.log_event", side_effect=fake_log_event):
-        before = len(fake_get_last_events(100))
+    with patch("custody.custodian_ledger.log_event", mock_log_event):
         hb = generate_heartbeat()
-        fake_log_event("AUTONOMY_LOOP", hb)
-        after = len(fake_get_last_events(100))
-        assert after == before + 1
+        # Import log_event inside the test to get the patched version
+        from custody.custodian_ledger import log_event
+        log_event("AUTONOMY_LOOP", hb)
+        # Verify log_event was called with the correct arguments
+        mock_log_event.assert_called_once_with("AUTONOMY_LOOP", hb)

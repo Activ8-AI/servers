@@ -1,23 +1,17 @@
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from agent_hub.activate import activate
-from custody.custodian_ledger import get_last_events
 
 
 def test_agent_activation():
     """Test that agent activation logs an event to the ledger."""
-    fake_ledger = []
+    mock_log_event = MagicMock()
 
-    def fake_get_last_events(n):
-        return fake_ledger[-n:]
-
-    def fake_log_event(event_type, event_data=None):
-        fake_ledger.append((event_type, event_data))
-
-    with patch("custody.custodian_ledger.get_last_events", side_effect=fake_get_last_events), \
-         patch("custody.custodian_ledger.log_event", side_effect=fake_log_event), \
-         patch("agent_hub.activate.log_event", side_effect=fake_log_event):
-        before = len(fake_get_last_events(100))
+    with patch("custody.custodian_ledger.log_event", mock_log_event), \
+         patch("agent_hub.activate.log_event", mock_log_event):
         activate()
-        after = len(fake_get_last_events(100))
-        assert after == before + 1
+        # Verify log_event was called at least once (for AGENT_ACTIVATED)
+        mock_log_event.assert_called()
+        # Verify it was called with the correct event type
+        calls = [call[0][0] for call in mock_log_event.call_args_list]
+        assert "AGENT_ACTIVATED" in calls
