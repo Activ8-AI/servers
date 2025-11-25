@@ -9,9 +9,29 @@ from typing import Any, Dict, Iterable
 
 class Orchestrator:
     def __init__(self, ledger, relays: Iterable[Any]):
+        """
+        Initialize the Orchestrator.
+
+        Args:
+            ledger: An object that provides event logging functionality. It must implement a
+                method `log_event(event_type: str, payload: dict) -> None`.
+            relays: An iterable of relay objects. Each relay should implement the required
+                interface for your orchestration logic (e.g., methods for communication or coordination).
+
+        Example:
+            class SimpleLedger:
+                def log_event(self, event_type, payload):
+                    print(f"{event_type}: {payload}")
+
+            class Relay:
+                pass
+
+            ledger = SimpleLedger()
+            relays = [Relay(), Relay()]
+            orch = Orchestrator(ledger, relays)
+        """
         self.ledger = ledger
         self.relays = list(relays)
-
     def log(self, event_type: str, payload: Dict[str, Any] | None = None) -> None:
         self.ledger.log_event(event_type, payload or {})
 
