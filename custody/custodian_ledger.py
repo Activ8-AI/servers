@@ -15,7 +15,9 @@ DB_PATH = Path(__file__).with_name("ledger.db")
 
 def _ensure_db() -> None:
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with sqlite3.connect(DB_PATH) as conn:
+    with sqlite3.connect(DB_PATH, timeout=30.0) as conn:
+        # Enable WAL mode for better concurrent access
+        conn.execute("PRAGMA journal_mode=WAL")
         conn.execute(
             """
             CREATE TABLE IF NOT EXISTS ledger (
@@ -40,7 +42,7 @@ def log_event(event_type: str, payload: Dict[str, Any] | None = None) -> None:
     payload = payload or {}
     _ensure_db()
     timestamp = datetime.now(timezone.utc).isoformat()
-    with sqlite3.connect(DB_PATH) as conn:
+    with sqlite3.connect(DB_PATH, timeout=30.0) as conn:
         conn.execute(
             "INSERT INTO ledger (timestamp, event_type, payload) VALUES (?, ?, ?)",
             (timestamp, event_type, json.dumps(payload)),
@@ -57,21 +59,24 @@ def get_last_events(n: int = 10) -> List[Dict[str, Any]]:
         return []
 
     _ensure_db()
-    with sqlite3.connect(DB_PATH) as conn:
+    with sqlite3.connect(DB_PATH, timeout=30.0) as conn:
         cur = conn.execute(
             "SELECT timestamp, event_type, payload FROM ledger ORDER BY id DESC LIMIT ?",
             (n,),
         )
         rows = cur.fetchall()
 
-    events = [
-        {
+    events = []
+    for row in rows:
+        try:
+            payload = json.loads(row[2]) if row[2] else {}
+        except json.JSONDecodeError:
+            payload = {}
+        events.append({
             "timestamp": row[0],
             "event": row[1],
-            "payload": json.loads(row[2]) if row[2] else {},
-        }
-        for row in rows
-    ]
+            "payload": payload,
+        })
     return list(reversed(events))
 
 

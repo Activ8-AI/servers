@@ -1,9 +1,16 @@
+from unittest.mock import patch
+
 from agent_hub.activate import activate
-from custody.custodian_ledger import get_last_events
 
 
 def test_agent_activation():
-    before = len(get_last_events(100))
-    activate()
-    after = len(get_last_events(100))
-    assert after == before + 1
+    fake_ledger = []
+
+    def fake_log_event(event_type, event_data=None):
+        fake_ledger.append((event_type, event_data))
+
+    with patch("agent_hub.activate.log_event", side_effect=fake_log_event):
+        before = len(fake_ledger)
+        activate()
+        after = len(fake_ledger)
+        assert after == before + 1

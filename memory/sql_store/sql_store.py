@@ -1,5 +1,5 @@
 """
-Simple in-memory SQL-like store placeholder.
+Simple in-memory key-value store placeholder.
 """
 
 from __future__ import annotations
