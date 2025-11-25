@@ -7,7 +7,9 @@ def test_agent_activation():
     fake_ledger = []
 
     def fake_get_last_events(n):
-        return fake_ledger[-n:]
+        if not fake_ledger:
+            return []
+        return fake_ledger[-min(n, len(fake_ledger)):]
 
     def fake_log_event(event_type, event_data=None):
         fake_ledger.append((event_type, event_data))

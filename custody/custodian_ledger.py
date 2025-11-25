@@ -73,7 +73,8 @@ def log_event(event_type: str, payload: Dict[str, Any] | None = None) -> None:
             if attempt < MAX_RETRIES - 1:
                 time.sleep(0.1 * (attempt + 1))  # Exponential backoff
     
-    raise last_error  # type: ignore[misc]
+    if last_error is not None:
+        raise last_error
 
 
 def get_last_events(n: int = 10) -> List[Dict[str, Any]]:
@@ -115,7 +116,9 @@ def get_last_events(n: int = 10) -> List[Dict[str, Any]]:
             if attempt < MAX_RETRIES - 1:
                 time.sleep(0.1 * (attempt + 1))  # Exponential backoff
     
-    raise last_error  # type: ignore[misc]
+    if last_error is not None:
+        raise last_error
+    return []  # Should never reach here, but satisfies type checker
 
 
 __all__ = ["log_event", "get_last_events", "DB_PATH"]
