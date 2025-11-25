@@ -13,7 +13,7 @@ from telemetry.emit_heartbeat import generate_heartbeat
 class Orchestrator:
     """Orchestrator for managing agent commands and relay coordination."""
 
-    # Pattern for valid command names: alphanumeric and underscores only
+    # Pattern for valid command names: alphanumeric and underscores (underscore not allowed as first char)
     _CMD_PATTERN = re.compile(r"^[a-zA-Z][a-zA-Z0-9_]*$")
 
     def __init__(self, ledger, relays: Iterable[Any]):

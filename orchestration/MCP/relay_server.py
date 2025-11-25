@@ -5,7 +5,7 @@ Minimal relay server stub that wires up configured relays.
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, Iterable, List, Tuple
+from typing import Any, Dict, Iterable, List, Tuple, Union
 
 from relay import NotionRelay, SlackSignalRelay, TeamworkSinkRelay
 
@@ -20,7 +20,7 @@ class RelayServer:
             TeamworkSinkRelay(),
         ]
 
-    def broadcast(self, payload: Dict[str, Any]) -> Dict[str, List[Tuple[str, str]]]:
+    def broadcast(self, payload: Dict[str, Any]) -> Dict[str, Union[List[str], List[Tuple[str, str]]]]:
         """
         Broadcast a payload to all registered relays.
 
