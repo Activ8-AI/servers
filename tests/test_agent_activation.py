@@ -13,5 +13,5 @@ def test_agent_activation():
         # Verify log_event was called at least once (for AGENT_ACTIVATED)
         mock_log_event.assert_called()
         # Verify it was called with the correct event type
-        calls = [call[0][0] for call in mock_log_event.call_args_list]
-        assert "AGENT_ACTIVATED" in calls
+        event_types = [args[0] for args, _ in mock_log_event.call_args_list]
+        assert "AGENT_ACTIVATED" in event_types
