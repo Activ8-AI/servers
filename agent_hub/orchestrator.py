@@ -79,11 +79,6 @@ class Orchestrator:
             self.log("ORCH_COMMAND_INVALID", {"cmd": cmd, "reason": "invalid format"})
             return {"status": "invalid_command", "error": "Command must be alphanumeric with underscores, starting with a letter"}
 
-        # Prevent calling internal methods (those starting with underscore after cmd_)
-        if cmd.startswith("_"):
-            self.log("ORCH_COMMAND_INVALID", {"cmd": cmd, "reason": "internal command"})
-            return {"status": "invalid_command", "error": "Cannot call internal commands"}
-
         self.log("ORCH_COMMAND_RECEIVED", {"cmd": cmd})
 
         handler = getattr(self, f"cmd_{cmd}", None)
