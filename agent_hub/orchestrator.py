@@ -54,7 +54,9 @@ class Orchestrator:
         return [
             attr[4:]  # Strip 'cmd_' prefix
             for attr in dir(self)
-            if attr.startswith("cmd_") and callable(getattr(self, attr))
+            if attr.startswith("cmd_")
+            and not attr.startswith("cmd__")  # Exclude double underscore after prefix
+            and callable(getattr(self, attr))
         ]
 
     def run_command(self, cmd: str, payload: Dict[str, Any] | None = None) -> Dict[str, Any]:
