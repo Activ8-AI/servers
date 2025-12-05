@@ -16,8 +16,10 @@ DB_PATH = Path(__file__).with_name("ledger.db")
 def _ensure_db() -> None:
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     with sqlite3.connect(DB_PATH, timeout=30.0) as conn:
-        # Enable WAL mode for better concurrent access
-        conn.execute("PRAGMA journal_mode=WAL")
+        # Enable WAL mode for better concurrent access, but only if not already set
+        mode = conn.execute("PRAGMA journal_mode").fetchone()[0]
+        if mode.lower() != "wal":
+            conn.execute("PRAGMA journal_mode=WAL")
         conn.execute(
             """
             CREATE TABLE IF NOT EXISTS ledger (
