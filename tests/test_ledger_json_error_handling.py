@@ -11,13 +11,7 @@ from custody.custodian_ledger import get_last_events, DB_PATH
 
 
 def test_get_last_events_handles_malformed_json():
-    """
-    Test that get_last_events() gracefully handles malformed JSON payloads.
-    
-    - Inserts a row with malformed JSON into the ledger
-    - Calls get_last_events() and verifies it returns an empty payload dict for that row
-    - Ensures the function doesn't crash and continues processing other valid rows
-    """
+    """Test that get_last_events() gracefully handles malformed JSON payloads."""
     # Use a temporary database for test isolation
     with tempfile.TemporaryDirectory() as tmpdir:
         test_db_path = Path(tmpdir) / "test_ledger.db"
@@ -72,9 +66,7 @@ def test_get_last_events_handles_malformed_json():
 
 
 def test_get_last_events_handles_empty_payload():
-    """
-    Test that get_last_events() handles empty string payloads gracefully.
-    """
+    """Test that get_last_events() handles empty string payloads gracefully."""
     with tempfile.TemporaryDirectory() as tmpdir:
         test_db_path = Path(tmpdir) / "test_ledger.db"
         
