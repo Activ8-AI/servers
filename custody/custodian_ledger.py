@@ -5,10 +5,13 @@ SQLite-backed ledger utility for recording and inspecting orchestration events.
 from __future__ import annotations
 
 import json
+import logging
 import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List
+
+logger = logging.getLogger(__name__)
 
 DB_PATH = Path(__file__).with_name("ledger.db")
 
@@ -72,7 +75,8 @@ def get_last_events(n: int = 10) -> List[Dict[str, Any]]:
     for row in rows:
         try:
             payload = json.loads(row[2]) if row[2] else {}
-        except json.JSONDecodeError:
+        except json.JSONDecodeError as e:
+            logger.warning("Failed to decode payload for event at timestamp %s: %s", row[0], e)
             payload = {}
         events.append({
             "timestamp": row[0],

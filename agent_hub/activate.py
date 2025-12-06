@@ -40,7 +40,13 @@ def activate(relays: Iterable | None = None) -> Dict[str, Any]:
 
     Returns:
         A dictionary containing:
-            - "heartbeat": The generated heartbeat dictionary with timing and health info.
+            - "heartbeat": The generated heartbeat dictionary with the following keys:
+                - "heartbeat_id": A unique UUID string identifying this heartbeat
+                - "timestamp": ISO 8601 formatted UTC timestamp
+                - "hostname": The machine hostname
+                - "platform": Platform information string
+                - "status": Health status string (e.g., "ok")
+                - "metadata": Optional dict if metadata was provided to generate_heartbeat()
             - "orchestrator": The initialized Orchestrator instance for running commands.
 
     Example:
@@ -61,7 +67,7 @@ def activate(relays: Iterable | None = None) -> Dict[str, Any]:
     log_event(
         "AGENT_ACTIVATED",
         {
-            "relays": [relay.name for relay in relays],
+            "relays": [getattr(relay, "name", relay.__class__.__name__) for relay in relays],
             "heartbeat_id": heartbeat["heartbeat_id"],
             "relay_count": len(relays),
         },
