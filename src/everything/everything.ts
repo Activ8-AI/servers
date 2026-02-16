@@ -36,10 +36,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const instructions = readFileSync(join(__dirname, "instructions.md"), "utf-8");
 
-const ToolInputSchema = ToolSchema.shape.inputSchema;
+const ToolInputSchema = ToolSchema.shape.inputSchema as unknown as z.ZodTypeAny;
 type ToolInput = z.infer<typeof ToolInputSchema>;
 
-const ToolOutputSchema = ToolSchema.shape.outputSchema;
+const ToolOutputSchema = ToolSchema.shape.outputSchema as unknown as z.ZodTypeAny;
 type ToolOutput = z.infer<typeof ToolOutputSchema>;
 
 type SendRequest = RequestHandlerExtra<ServerRequest, ServerNotification>["sendRequest"];
@@ -636,11 +636,9 @@ export const createServer = () => {
         maxTokens,
         extra.sendRequest
       );
-      return {
-        content: [
-          { type: "text", text: `LLM sampling result: ${result.content.text}` },
-        ],
-      };
+      const sampled =
+        result.content.type === "text" ? result.content.text : JSON.stringify(result.content);
+      return { content: [{ type: "text", text: `LLM sampling result: ${sampled}` }] };
     }
 
     if (name === ToolName.GET_TINY_IMAGE) {

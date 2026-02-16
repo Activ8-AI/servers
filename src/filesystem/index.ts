@@ -143,7 +143,7 @@ const GetFileInfoArgsSchema = z.object({
   path: z.string(),
 });
 
-const ToolInputSchema = ToolSchema.shape.inputSchema;
+const ToolInputSchema = ToolSchema.shape.inputSchema as unknown as z.ZodTypeAny;
 type ToolInput = z.infer<typeof ToolInputSchema>;
 
 // Server setup
