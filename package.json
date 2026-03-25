@@ -16,7 +16,19 @@
     "build": "npm run build --workspaces",
     "watch": "npm run watch --workspaces",
     "publish-all": "npm publish --workspaces --access public",
-    "link-all": "npm link --workspaces"
+    "link-all": "npm link --workspaces",
+    "operationalize:build": "node scripts/build-operationalization-check.mjs",
+    "operationalize:repo": "node scripts/operationalize-buildwide.mjs",
+    "action-persistence:check": "node scripts/action-persistence-self-check.mjs",
+    "lint:aliases": "node scripts/lint-alias-drift.mjs",
+    "query:source-ladder": "node scripts/query-source-ladder.mjs",
+    "session:boot": "node scripts/session-boot.mjs",
+    "context:sync:self": "node scripts/sync-context-pack.mjs --target . --strict",
+    "agents:sync:auto": "node scripts/sync-agent-instructions.mjs --fix --push-notion --emit-notion",
+    "mcp:sync": "node scripts/sync-mcp-connections.mjs",
+    "mcp:sync:dry": "node scripts/sync-mcp-connections.mjs --dry-run",
+    "postinstall": "npm run mcp:sync",
+    "governance:thresholds:check": "node scripts/check-governance-threshold-instrumentation.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/server-everything": "*",
