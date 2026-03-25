@@ -584,9 +584,17 @@ const payload = {
 
 const jsonPath = join(OUTPUT_DIR, `${ts}__build_operationalization.json`);
 const mdPath = join(OUTPUT_DIR, `${ts}__build_operationalization.md`);
+const latestJsonPath = join(OUTPUT_DIR, "latest__build_operationalization.json");
+const latestMdPath = join(OUTPUT_DIR, "latest__build_operationalization.md");
 writeFileSync(jsonPath, `${JSON.stringify(payload, null, 2)}\n`, "utf-8");
 writeFileSync(
   mdPath,
+  `# Build Operationalization\n\n- Status: ${status}\n- Generated: ${payload.generated_at_ct}\n- Blockers: ${blockers.length}\n`,
+  "utf-8"
+);
+writeFileSync(latestJsonPath, `${JSON.stringify(payload, null, 2)}\n`, "utf-8");
+writeFileSync(
+  latestMdPath,
   `# Build Operationalization\n\n- Status: ${status}\n- Generated: ${payload.generated_at_ct}\n- Blockers: ${blockers.length}\n`,
   "utf-8"
 );

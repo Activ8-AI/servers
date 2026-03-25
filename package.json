@@ -27,7 +27,6 @@
     "agents:sync:auto": "node scripts/sync-agent-instructions.mjs --fix --push-notion --emit-notion",
     "mcp:sync": "node scripts/sync-mcp-connections.mjs",
     "mcp:sync:dry": "node scripts/sync-mcp-connections.mjs --dry-run",
-    "postinstall": "npm run mcp:sync",
     "governance:thresholds:check": "node scripts/check-governance-threshold-instrumentation.mjs"
   },
   "dependencies": {
